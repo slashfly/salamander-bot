@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+// code taken from discord4j example projects
 public class GlobalCommandRegistrar {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
