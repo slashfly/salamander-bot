@@ -24,7 +24,7 @@ public class SalamanderBot {
         GatewayDiscordClient client = DiscordClientBuilder.create(token).build().login().block();
 
         // obtain commands from json files
-        List<String> commands = List.of("roll.json");
+        List<String> commands = List.of("roll.json", "blackjack.json");
         try {
             new GlobalCommandRegistrar(client.getRestClient()).registerCommands(commands);
         } catch (Exception e) {
@@ -57,4 +57,5 @@ public class SalamanderBot {
         result.append((int) ((Math.random() * (max - 1)) + 1));
         return result.toString();
     }
+    
 }
