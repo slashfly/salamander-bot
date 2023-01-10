@@ -11,12 +11,17 @@ import discord4j.core.object.command.ApplicationCommandInteractionOption;
 import discord4j.core.object.command.ApplicationCommandInteractionOptionValue;
 import discord4j.core.object.entity.User;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 import reactor.core.publisher.Mono;
 
 public class SalamanderBot {
-
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(SalamanderBot.class);
+    
     public static void main(String[] args) {
         String token = "";
 
@@ -28,6 +33,7 @@ public class SalamanderBot {
         try {
             new GlobalCommandRegistrar(client.getRestClient()).registerCommands(commands);
         } catch (Exception e) {
+            LOGGER.error("Failed to register slash commands with Discord", e);
         }
 
         client.on(new ReactiveEventAdapter() {
