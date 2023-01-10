@@ -19,9 +19,9 @@ import java.util.List;
 import reactor.core.publisher.Mono;
 
 public class SalamanderBot {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SalamanderBot.class);
-    
+
     public static void main(String[] args) {
         String token = "";
 
@@ -63,5 +63,5 @@ public class SalamanderBot {
         result.append((int) ((Math.random() * (max - 1)) + 1));
         return result.toString();
     }
-    
+
 }
