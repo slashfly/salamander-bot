@@ -6,8 +6,8 @@
             "name": "max",
             "description": "Roll a random number from 1 to another number which you can pick (default 100)",
             "type": 4,
-            "minValue": 2,
-            "maxValue": 1000000000,
+            "min_value": 2,
+            "max_value": 1000000000,
             "required": false
         }
     ]
