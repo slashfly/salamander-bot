@@ -25,7 +25,7 @@ public class SalamanderBot {
     private static final Logger LOGGER = LoggerFactory.getLogger(SalamanderBot.class);
 
     public static void main(String[] args) {
-        String token = "MTA1NTE2NjUxOTk4NzkzMzIzNA.Gr2Bdf.smdmoa-QZPYq056p2YP012rnoGM8EZLaSSLXmE";
+        String token = "";
 
         // login
         GatewayDiscordClient client = DiscordClientBuilder.create(token).build().login().block();
@@ -39,8 +39,8 @@ public class SalamanderBot {
         }
 
         // all response buttons
-        Button hit = Button.success("1", "Hit");
-        Button stand = Button.danger("2", "Stand");
+        Button hit = Button.success("hit", "Hit");
+        Button stand = Button.danger("stand", "Stand");
 
         client.on(new ReactiveEventAdapter() {
             @Override
