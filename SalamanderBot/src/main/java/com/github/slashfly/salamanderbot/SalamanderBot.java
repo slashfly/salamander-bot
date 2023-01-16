@@ -39,8 +39,8 @@ public class SalamanderBot {
         }
 
         // all response buttons
-        Button hit = Button.success("1", "Hit");
-        Button stand = Button.danger("2", "Stand");
+        Button hit = Button.success("hit", "Hit");
+        Button stand = Button.danger("stand", "Stand");
 
         client.on(new ReactiveEventAdapter() {
             @Override
