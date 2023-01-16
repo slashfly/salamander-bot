@@ -9,6 +9,8 @@ import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.object.command.ApplicationCommandInteraction;
 import discord4j.core.object.command.ApplicationCommandInteractionOption;
 import discord4j.core.object.command.ApplicationCommandInteractionOptionValue;
+import discord4j.core.object.component.ActionRow;
+import discord4j.core.object.component.Button;
 import discord4j.core.object.entity.User;
 
 import org.slf4j.Logger;
@@ -23,7 +25,7 @@ public class SalamanderBot {
     private static final Logger LOGGER = LoggerFactory.getLogger(SalamanderBot.class);
 
     public static void main(String[] args) {
-        String token = "";
+        String token = "MTA1NTE2NjUxOTk4NzkzMzIzNA.Gr2Bdf.smdmoa-QZPYq056p2YP012rnoGM8EZLaSSLXmE";
 
         // login
         GatewayDiscordClient client = DiscordClientBuilder.create(token).build().login().block();
@@ -36,6 +38,10 @@ public class SalamanderBot {
             LOGGER.error("Failed to register slash commands with Discord", e);
         }
 
+        // all response buttons
+        Button hit = Button.success("1", "Hit");
+        Button stand = Button.danger("2", "Stand");
+
         client.on(new ReactiveEventAdapter() {
             @Override
             public Publisher<?> onChatInputInteraction(ChatInputInteractionEvent event) {
@@ -45,6 +51,9 @@ public class SalamanderBot {
                 if (event.getCommandName().equals("roll")) {
                     String roll = roll(event.getInteraction().getCommandInteraction().get());
                     return event.reply(author.getMention() + ", You rolled **" + roll + "**!");
+                } else if (event.getCommandName().equals("blackjack")) {
+                    return event.reply("look theres buttons")
+                            .withComponents(ActionRow.of(hit, stand));
                 }
                 return Mono.empty();
             }
@@ -64,4 +73,33 @@ public class SalamanderBot {
         return result.toString();
     }
 
+    private static String playerCards(ApplicationCommandInteraction acid) {
+
+        StringBuilder result = new StringBuilder();
+        return result.toString();
+    }
+
+    private static String playerTotal(ApplicationCommandInteraction acid) {
+
+        StringBuilder result = new StringBuilder();
+        return result.toString();
+    }
+
+    private static String dealer(ApplicationCommandInteraction acid) {
+
+        StringBuilder result = new StringBuilder();
+        return result.toString();
+    }
+
+    private static String hit(ApplicationCommandInteraction acid) {
+
+        StringBuilder result = new StringBuilder();
+        return result.toString();
+    }
+
+    private static String stand(ApplicationCommandInteraction acid) {
+
+        StringBuilder result = new StringBuilder();
+        return result.toString();
+    }
 }
