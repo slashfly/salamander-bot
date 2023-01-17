@@ -77,33 +77,4 @@ public class SalamanderBot {
         return result.toString();
     }
 
-    private static String playerCards(ApplicationCommandInteraction acid) {
-
-        StringBuilder result = new StringBuilder();
-        return result.toString();
-    }
-
-    private static String playerTotal(ApplicationCommandInteraction acid) {
-
-        StringBuilder result = new StringBuilder();
-        return result.toString();
-    }
-
-    private static String dealer(ApplicationCommandInteraction acid) {
-
-        StringBuilder result = new StringBuilder();
-        return result.toString();
-    }
-
-    private static String hit(ApplicationCommandInteraction acid) {
-
-        StringBuilder result = new StringBuilder();
-        return result.toString();
-    }
-
-    private static String stand(ApplicationCommandInteraction acid) {
-
-        StringBuilder result = new StringBuilder();
-        return result.toString();
-    }
 }
