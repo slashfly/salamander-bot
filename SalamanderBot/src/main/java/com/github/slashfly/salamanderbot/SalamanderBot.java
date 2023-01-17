@@ -16,6 +16,9 @@ import discord4j.core.object.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.io.IOException;
 import java.util.List;
 
 import reactor.core.publisher.Mono;
@@ -24,8 +27,9 @@ public class SalamanderBot {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SalamanderBot.class);
 
-    public static void main(String[] args) {
-        String token = "";
+    public static void main(String[] args) throws IOException {
+        Path tokenFile = Path.of("token.txt");
+        String token = Files.readString(tokenFile);
 
         // login
         GatewayDiscordClient client = DiscordClientBuilder.create(token).build().login().block();
