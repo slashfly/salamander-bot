@@ -21,8 +21,19 @@ public class Blackjack {
     }
 
     private static String dealer(ApplicationCommandInteraction acid) {
-
+        dealer.add(new Object());
+        
+        //draw 2 cards
+        dealer.get(0).setHand((int) ((Math.random() * (11 - 1)) + 1));
+        dealer.get(0).setHand(dealer.get(0).getHand() + (int) ((Math.random() * (11 - 1)) + 1));
+        
+        //draw a third card if total is under 17
+        if (dealer.get(0).getHand() < 17) {
+            dealer.get(0).setHand(dealer.get(0).getHand() + (int) ((Math.random() * (11 - 1)) + 1));
+        }
+        
         StringBuilder result = new StringBuilder();
+        result.append(dealer.get(0).getHand());
         return result.toString();
     }
 
