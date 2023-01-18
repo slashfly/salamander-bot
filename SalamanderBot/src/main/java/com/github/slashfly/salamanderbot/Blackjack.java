@@ -22,18 +22,21 @@ public class Blackjack {
 
     private static String dealer(ApplicationCommandInteraction acid) {
         dealer.add(new Object());
-        
-        //draw 2 cards
-        dealer.get(0).setHand((int) ((Math.random() * (11 - 1)) + 1));
-        dealer.get(0).setHand(dealer.get(0).getHand() + (int) ((Math.random() * (11 - 1)) + 1));
-        
-        //draw a third card if total is under 17
-        if (dealer.get(0).getHand() < 17) {
-            dealer.get(0).setHand(dealer.get(0).getHand() + (int) ((Math.random() * (11 - 1)) + 1));
+        int cards = 0;
+
+        // draw cards until either the total is 17 or higher, or the dealer has 3 cards
+        while (true) {
+            if (cards < 3 || dealer.get(0).getHand() < 17) {
+                dealer.get(0).setHand(dealer.get(0).getHand() + (int) ((Math.random() * (11 - 1)) + 1));
+                cards = cards + 1;
+            } else {
+                break;
+            }
         }
-        
+
         StringBuilder result = new StringBuilder();
         result.append(dealer.get(0).getHand());
+        dealer.remove(0);
         return result.toString();
     }
 
