@@ -22,17 +22,17 @@ public class Blackjack {
             }
         }
 
-        StringBuilder result = new StringBuilder();
-        result.append(dealer.get(0).getHand());
-        return result.toString();
+        StringBuilder dealerCards = new StringBuilder();
+        dealerCards.append(dealer.get(0).getHand());
+        return dealerCards.toString();
     }
 
     private static String hit(ApplicationCommandInteraction acid) {
         player.get(0).setHand(player.get(0).getHand() + (int) ((Math.random() * (11 - 1)) + 1));
         
-        StringBuilder result = new StringBuilder();
-        result.append(player.get(0).getHand());
-        return result.toString();
+        StringBuilder playerCards = new StringBuilder();
+        playerCards.append(player.get(0).getHand());
+        return playerCards.toString();
     }
 
     private static String stand(ApplicationCommandInteraction acid,  int dealerHand) {
