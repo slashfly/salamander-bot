@@ -7,19 +7,7 @@ public class Blackjack {
 
     public static ArrayList<Object> player = new ArrayList<Object>();
     public static ArrayList<Object> dealer = new ArrayList<Object>();
-
-    private static String playerCards(ApplicationCommandInteraction acid) {
-
-        StringBuilder result = new StringBuilder();
-        return result.toString();
-    }
-
-    private static String playerTotal(ApplicationCommandInteraction acid) {
-
-        StringBuilder result = new StringBuilder();
-        return result.toString();
-    }
-
+    
     private static String dealer(ApplicationCommandInteraction acid) {
         dealer.add(new Object());
         int cards = 0;
@@ -41,8 +29,10 @@ public class Blackjack {
     }
 
     private static String hit(ApplicationCommandInteraction acid) {
-
+        player.get(0).setHand(player.get(0).getHand() + (int) ((Math.random() * (11 - 1)) + 1));
+        
         StringBuilder result = new StringBuilder();
+        result.append(player.get(0).getHand());
         return result.toString();
     }
 

@@ -1,5 +1,7 @@
 package com.github.slashfly.salamanderbot;
 
+import static com.github.slashfly.salamanderbot.Blackjack.player;
+
 import org.reactivestreams.Publisher;
 
 import discord4j.core.DiscordClientBuilder;
@@ -51,11 +53,12 @@ public class SalamanderBot {
             public Publisher<?> onChatInputInteraction(ChatInputInteractionEvent event) {
                 // get the user initating the interaction
                 final User author = event.getInteraction().getUser();
-                // all command responses
+                // simple command responses
                 if (event.getCommandName().equals("roll")) {
                     String roll = roll(event.getInteraction().getCommandInteraction().get());
                     return event.reply(author.getMention() + ", You rolled **" + roll + "**!");
                 } else if (event.getCommandName().equals("blackjack")) {
+                    player.add(new Object());
                     return event.reply("look theres buttons")
                             .withComponents(ActionRow.of(hit, stand));
                 }
