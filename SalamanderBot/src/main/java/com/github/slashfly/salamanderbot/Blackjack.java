@@ -24,7 +24,6 @@ public class Blackjack {
 
         StringBuilder result = new StringBuilder();
         result.append(dealer.get(0).getHand());
-        dealer.remove(0);
         return result.toString();
     }
 
@@ -36,9 +35,31 @@ public class Blackjack {
         return result.toString();
     }
 
-    private static String stand(ApplicationCommandInteraction acid) {
-
+    private static String stand(ApplicationCommandInteraction acid,  int dealerHand) {
         StringBuilder result = new StringBuilder();
+        
+        // result 1: dealer had more cards than player and didn't bust
+        if(dealer.get(0).getHand() > player.get(0).getHand() && dealer.get(0).getHand() < 22){
+            result.append(1);
+        // result 2: player busted
+        } else if(player.get(0).getHand() > 21) {
+            result.append(2);
+        // result 3: both busted
+        } else if(player.get(0).getHand() > 21 && dealer.get(0).getHand() > 21){
+            result.append(3);
+        // result 4: same amount of cards
+        } else if(player.get(0).getHand() == dealer.get(0).getHand()){
+            result.append(4);
+        // result 5: dealer had a total of 21 and player did not
+        } else if(dealer.get(0).getHand() == 21 && player.get(0).getHand() != 21){
+            result.append(5);
+        // result 6: player had a total of 21 and dealer did not
+        } else if(player.get(0).getHand() == 21 && dealer.get(0).getHand() != 21){
+            result.append(6);
+        }
+        
+        dealer.remove(0);
+        player.remove(0);
         return result.toString();
     }
 }
