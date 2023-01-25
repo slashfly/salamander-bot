@@ -1,5 +1,6 @@
 package com.github.slashfly.salamanderbot;
 
+import static com.github.slashfly.salamanderbot.Blackjack.dealer;
 import static com.github.slashfly.salamanderbot.Blackjack.player;
 
 import org.reactivestreams.Publisher;
@@ -14,7 +15,6 @@ import discord4j.core.object.command.ApplicationCommandInteractionOptionValue;
 import discord4j.core.object.component.ActionRow;
 import discord4j.core.object.component.Button;
 import discord4j.core.object.entity.User;
-import discord4j.common.util.Snowflake;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,16 +23,23 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
 import java.util.List;
+import java.text.DecimalFormat;
 
 import reactor.core.publisher.Mono;
 
 public class SalamanderBot {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SalamanderBot.class);
 
     public static void main(String[] args) throws IOException {
         Path tokenFile = Path.of("token.txt");
         String token = Files.readString(tokenFile);
+
+        // add enough elements to the blackjack arraylist to hold the snowflake index numbers
+        for (int i = 0; i < 40000; i++) {
+            player.add(0, new Object());
+            dealer.add(0, new Object());
+        }
 
         // login
         GatewayDiscordClient client = DiscordClientBuilder.create(token).build().login().block();
@@ -48,7 +55,7 @@ public class SalamanderBot {
         // all response buttons
         Button hit = Button.success("hit", "Hit");
         Button stand = Button.danger("stand", "Stand");
-        
+
         client.on(new ReactiveEventAdapter() {
             @Override
             public Publisher<?> onChatInputInteraction(ChatInputInteractionEvent event) {
@@ -58,11 +65,18 @@ public class SalamanderBot {
                 if (event.getCommandName().equals("roll")) {
                     String roll = roll(event.getInteraction().getCommandInteraction().get());
                     return event.reply(author.getMention() + ", You rolled **" + roll + "**!");
-                } else if (event.getCommandName().equals("blackjack")) {  
-                    int bjSnowflake = Integer.parseInt(event.getInteraction().getMessageId().get().asString());
+                } else if (event.getCommandName().equals("blackjack")) {
+                    // sqrt twice and round the snowflake to make it below the 32-bit integer limit
+                    // use decimal format to prevent the snowflake from being in scientific notation
+                    DecimalFormat df = new DecimalFormat("#");
+                    Double bjSnowflakeLong = Double.valueOf(event.getInteraction().getId().asString());
+                    String bjSnowflakeString = df.format(Math.sqrt(Math.sqrt(bjSnowflakeLong)));
+
+                    int bjSnowflake = Math.round(Long.parseLong(bjSnowflakeString));
+
+                    // use the snowflake as an index number for arraylist 
                     player.add(bjSnowflake, new Object());
-                    Blackjack blackjack = new Blackjack();
-                    
+
                     String playerHit = Blackjack.hit(event.getInteraction().getCommandInteraction().get(), bjSnowflake);
                     return event.reply(author.getMention() + "**, your current total is **" + "`" + playerHit + "`.\n"
                             + "What will you do?")
