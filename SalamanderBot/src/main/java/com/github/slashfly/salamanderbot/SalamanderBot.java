@@ -48,7 +48,7 @@ public class SalamanderBot {
         // all response buttons
         Button hit = Button.success("hit", "Hit");
         Button stand = Button.danger("stand", "Stand");
-
+        
         client.on(new ReactiveEventAdapter() {
             @Override
             public Publisher<?> onChatInputInteraction(ChatInputInteractionEvent event) {
@@ -63,7 +63,7 @@ public class SalamanderBot {
                     player.add(bjSnowflake, new Object());
                     Blackjack blackjack = new Blackjack();
                     
-                    String playerHit = Blackjack.hit(event.getInteraction().getCommandInteraction().get());
+                    String playerHit = Blackjack.hit(event.getInteraction().getCommandInteraction().get(), bjSnowflake);
                     return event.reply(author.getMention() + "**, your current total is **" + "`" + playerHit + "`.\n"
                             + "What will you do?")
                             .withComponents(ActionRow.of(hit, stand));
