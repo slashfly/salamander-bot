@@ -26,7 +26,7 @@ import java.util.List;
 import reactor.core.publisher.Mono;
 
 public class SalamanderBot {
-
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(SalamanderBot.class);
 
     public static void main(String[] args) throws IOException {
@@ -59,7 +59,11 @@ public class SalamanderBot {
                     return event.reply(author.getMention() + ", You rolled **" + roll + "**!");
                 } else if (event.getCommandName().equals("blackjack")) {
                     player.add(new Object());
-                    return event.reply("look theres buttons")
+                    Blackjack blackjack = new Blackjack();
+                    
+                    String playerHit = Blackjack.hit(event.getInteraction().getCommandInteraction().get());
+                    return event.reply(author.getMention() + "**, your current total is **" + "`" + playerHit + "`.\n"
+                            + "What will you do?")
                             .withComponents(ActionRow.of(hit, stand));
                 }
                 return Mono.empty();
