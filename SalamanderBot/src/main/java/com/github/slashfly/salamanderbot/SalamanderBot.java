@@ -14,6 +14,7 @@ import discord4j.core.object.command.ApplicationCommandInteractionOptionValue;
 import discord4j.core.object.component.ActionRow;
 import discord4j.core.object.component.Button;
 import discord4j.core.object.entity.User;
+import discord4j.common.util.Snowflake;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,8 +58,9 @@ public class SalamanderBot {
                 if (event.getCommandName().equals("roll")) {
                     String roll = roll(event.getInteraction().getCommandInteraction().get());
                     return event.reply(author.getMention() + ", You rolled **" + roll + "**!");
-                } else if (event.getCommandName().equals("blackjack")) {
-                    player.add(new Object());
+                } else if (event.getCommandName().equals("blackjack")) {  
+                    int bjSnowflake = Integer.parseInt(event.getInteraction().getMessageId().get().asString());
+                    player.add(bjSnowflake, new Object());
                     Blackjack blackjack = new Blackjack();
                     
                     String playerHit = Blackjack.hit(event.getInteraction().getCommandInteraction().get());
