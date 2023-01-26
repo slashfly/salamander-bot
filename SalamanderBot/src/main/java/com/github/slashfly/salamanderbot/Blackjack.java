@@ -8,10 +8,11 @@ public class Blackjack {
     public static ArrayList<Object> player = new ArrayList<>();
     public static ArrayList<Object> dealer = new ArrayList<>();
     public static ArrayList<Object> currentMessage = new ArrayList<>();
+    public static ArrayList<Object> currentBlackjack = new ArrayList<>();
 
     public static void Array(String[] args) {
         // add enough elements to the blackjack arraylist to hold the snowflake index numbers
-        for (int i = 0; i < 40000; i++) {
+        for (int i = 0; i < 10; i++) {
             player.add(0, new Object());
             dealer.add(0, new Object());
         }

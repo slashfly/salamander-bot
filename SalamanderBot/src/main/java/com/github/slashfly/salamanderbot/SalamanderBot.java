@@ -1,5 +1,6 @@
 package com.github.slashfly.salamanderbot;
 
+import static com.github.slashfly.salamanderbot.Blackjack.currentBlackjack;
 import static com.github.slashfly.salamanderbot.Blackjack.player;
 import static com.github.slashfly.salamanderbot.Blackjack.currentMessage;
 
@@ -40,12 +41,13 @@ public class SalamanderBot {
         Path tokenFile = Path.of("token.txt");
         String token = Files.readString(tokenFile);
 
-        // add an arraylist value that states how many blackjack games have been played
+        // add arraylist values that states how many blackjack games have been played
         // add a few empty values to the player arraylist beforehand to avoid IndexOutOfBoundsException
         for (int i = 0; i < 10; i++) {
             player.add(0, new Object());
         }
         currentMessage.add(0, new Object());
+        currentBlackjack.add(0, new Object());
 
         // login
         GatewayDiscordClient client = DiscordClientBuilder.create(token).build().login().block();
@@ -68,21 +70,23 @@ public class SalamanderBot {
                     return event.reply(author.getMention() + ", You rolled **" + roll + "**!");
                 } else if (event.getCommandName().equals("blackjack")) {
                     currentMessage.get(0).setTimesUsed(currentMessage.get(0).getTimesUsed() + 1);
-                    int currentBlackjack = currentMessage.get(0).getTimesUsed();
-                    return event.deferReply().then(blackjackMain(event, currentBlackjack));
+                    currentBlackjack.get(0).setCurrentBlackjack(currentMessage.get(0).getTimesUsed());
+                    int customMessageId = currentBlackjack.get(0).getCurrentBlackjack();
+                    return event.deferReply().then(blackjackMain(event, customMessageId));
                 }
                 return Mono.empty();
             }
-            /*
+            
             public Publisher<?> onButtonInteraction(ButtonInteractionEvent event) {
+                int customMessageId = currentBlackjack.get(0).getCurrentBlackjack();
                 if (event.getCustomId().equals("hit")) {
-                    return event.deferReply().then(blackjackHit(event, currentBlackjack));
+                    return event.deferReply().then(blackjackHit(event, customMessageId));
                 } else if (event.getCustomId().equals("stand")) {
-                    return event.deferReply().then(blackjackStand(event, currentBlackjack));
+                    return event.deferReply().then(blackjackStand(event, customMessageId));
                 }
                 return Mono.empty();
             }
-             */
+             
         }).blockLast();
     }
 
