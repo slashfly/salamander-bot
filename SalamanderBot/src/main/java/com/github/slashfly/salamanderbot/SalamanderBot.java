@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,9 +43,8 @@ public class SalamanderBot {
         Path tokenFile = Path.of("token.txt");
         String token = Files.readString(tokenFile);
 
-        // add arraylist values that states how many blackjack games have been played
-        // add empty values to the player arraylist beforehand to avoid IndexOutOfBoundsException
-        for (int i = 0; i < 10000; i++) {
+        // add empty values to the arraylists beforehand to avoid IndexOutOfBoundsException
+        for (int i = 0; i < 40000; i++) {
             player.add(0, new Object());
             dealer.add(0, new Object());
         }
@@ -70,9 +70,8 @@ public class SalamanderBot {
                     String roll = roll(event.getInteraction().getCommandInteraction().get());
                     return event.reply(author.getMention() + ", You rolled **" + roll + "**!");
                 } else if (event.getCommandName().equals("blackjack")) {
-                    // create custom message id by counting amount of times blackjack command has been used
-                    currentMessage.get(0).setTimesUsed(currentMessage.get(0).getTimesUsed() + 1);
-                    int customMessageId = currentMessage.get(0).getTimesUsed();
+
+                    Long customMessageId = Long.parseLong(event.getInteraction().getId().asString());
 
                     return event.deferReply().then(blackjackMain(event, customMessageId));
                 }
@@ -80,7 +79,7 @@ public class SalamanderBot {
             }
 
             public Publisher<?> onButtonInteraction(ButtonInteractionEvent event) {
-                int customMessageId = currentMessage.get(0).getTimesUsed();
+                Long customMessageId = Long.parseLong(event.getInteraction().getId().asString());
                 if (event.getCustomId().equals("hit")) {
                     return event.deferEdit().then(blackjackHit(event, customMessageId));
                 } else if (event.getCustomId().equals("stand")) {
@@ -105,11 +104,12 @@ public class SalamanderBot {
         return result.toString();
     }
 
-    private static Mono<Message> blackjackMain(ChatInputInteractionEvent event, int currentBlackjack) {
+    private static Mono<Message> blackjackMain(ChatInputInteractionEvent event, Long snowflake) {
         // get the user initating the interaction
         final User author = event.getInteraction().getUser();
 
         // use the snowflake as an index number for arraylist 
+        int currentBlackjack = snowflakeConverter(snowflake);
         player.add(currentBlackjack, new Object());
 
         String newPlayer = Blackjack.player(event.getInteraction().getCommandInteraction().get(), currentBlackjack);
@@ -119,10 +119,12 @@ public class SalamanderBot {
                 .withComponents(ActionRow.of(hit, stand));
     }
 
-    private static Mono<Message> blackjackHit(ButtonInteractionEvent event, int currentBlackjack) {
+    private static Mono<Message> blackjackHit(ButtonInteractionEvent event, Long snowflake) {
         // get the user initating the interaction
         final User author = event.getInteraction().getUser();
-
+        
+        int currentBlackjack = snowflakeConverter(snowflake);
+        
         String playerHit = Blackjack.hit(event.getInteraction().getCommandInteraction().get(), currentBlackjack);
         if (Integer.parseInt(playerHit) < 21) {
             return event.editReply(author.getMention() + "**, your current total is **" + "`" + playerHit + "`.\n"
@@ -135,11 +137,24 @@ public class SalamanderBot {
         return Mono.empty();
     }
 
-    private static Mono<Message> blackjackStand(ButtonInteractionEvent event, int currentBlackjack) {
+    private static Mono<Message> blackjackStand(ButtonInteractionEvent event, Long snowflake) {
         // get the user initating the interaction
         final User author = event.getInteraction().getUser();
 
+        int currentBlackjack = snowflakeConverter(snowflake);
+        
         String result = Blackjack.stand(event.getInteraction().getCommandInteraction().get(), currentBlackjack);
         return event.editReply(author.getMention() + result);
+    }
+
+    private static int snowflakeConverter(Long snowflake) {
+        // sqrt twice and round the snowflake to make it below the 32-bit integer limit
+        // use decimal format to prevent the snowflake from being in scientific notation
+        DecimalFormat df = new DecimalFormat("#");
+        Double bjSnowflakeLong = Double.valueOf(snowflake);
+        String bjSnowflakeString = df.format(Math.sqrt(Math.sqrt(bjSnowflakeLong)));
+
+        int bjSnowflake = Math.round(Long.parseLong(bjSnowflakeString));
+        return bjSnowflake;
     }
 }
