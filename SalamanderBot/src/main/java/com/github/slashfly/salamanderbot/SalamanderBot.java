@@ -3,6 +3,7 @@ package com.github.slashfly.salamanderbot;
 import static com.github.slashfly.salamanderbot.Blackjack.currentBlackjack;
 import static com.github.slashfly.salamanderbot.Blackjack.player;
 import static com.github.slashfly.salamanderbot.Blackjack.currentMessage;
+import static com.github.slashfly.salamanderbot.Blackjack.dealer;
 
 import org.reactivestreams.Publisher;
 
@@ -25,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import reactor.core.publisher.Mono;
@@ -45,6 +47,7 @@ public class SalamanderBot {
         // add a few empty values to the player arraylist beforehand to avoid IndexOutOfBoundsException
         for (int i = 0; i < 10; i++) {
             player.add(0, new Object());
+            dealer.add(0, new Object());
         }
         currentMessage.add(0, new Object());
         currentBlackjack.add(0, new Object());
@@ -76,17 +79,17 @@ public class SalamanderBot {
                 }
                 return Mono.empty();
             }
-            
+
             public Publisher<?> onButtonInteraction(ButtonInteractionEvent event) {
                 int customMessageId = currentBlackjack.get(0).getCurrentBlackjack();
                 if (event.getCustomId().equals("hit")) {
-                    return event.deferReply().then(blackjackHit(event, customMessageId));
+                    return event.deferEdit().then(blackjackHit(event, customMessageId));
                 } else if (event.getCustomId().equals("stand")) {
-                    return event.deferReply().then(blackjackStand(event, customMessageId));
+                    return event.deferEdit().then(blackjackStand(event, customMessageId));
                 }
                 return Mono.empty();
             }
-             
+
         }).blockLast();
     }
 
