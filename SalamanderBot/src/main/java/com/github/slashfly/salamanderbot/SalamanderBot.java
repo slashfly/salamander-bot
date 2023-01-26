@@ -43,8 +43,8 @@ public class SalamanderBot {
         String token = Files.readString(tokenFile);
 
         // add arraylist values that states how many blackjack games have been played
-        // add a few empty values to the player arraylist beforehand to avoid IndexOutOfBoundsException
-        for (int i = 0; i < 10; i++) {
+        // add empty values to the player arraylist beforehand to avoid IndexOutOfBoundsException
+        for (int i = 0; i < 10000; i++) {
             player.add(0, new Object());
             dealer.add(0, new Object());
         }
