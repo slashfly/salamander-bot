@@ -17,7 +17,7 @@ public class Blackjack {
         }
     }
 
-    public static String dealer(ApplicationCommandInteraction acid, int currentBlackjack) {
+    public static int dealer(int currentBlackjack) {
         dealer.add(currentBlackjack, new Object());
         int cards = 0;
 
@@ -30,10 +30,7 @@ public class Blackjack {
                 break;
             }
         }
-
-        StringBuilder dealerCards = new StringBuilder();
-        dealerCards.append(dealer.get(currentBlackjack).getHand());
-        return dealerCards.toString();
+        return dealer.get(currentBlackjack).getHand();
     }
 
     public static String player(ApplicationCommandInteraction acid, int currentBlackjack) {
@@ -56,28 +53,28 @@ public class Blackjack {
 
     public static String stand(ApplicationCommandInteraction acid, int currentBlackjack) {
         StringBuilder result = new StringBuilder();
-
-        if (dealer.get(currentBlackjack).getHand() > player.get(currentBlackjack).getHand() && dealer.get(currentBlackjack).getHand() < 22) {
+        int dealerHand = dealer(currentBlackjack);
+        if (dealerHand > player.get(currentBlackjack).getHand() && dealerHand < 22) {
             // result 1: dealer had a bigger total than player and didn't bust
-            result.append("**, You lost with **`" + player.get(currentBlackjack).getHand() + "`** vs **`" + dealer.get(currentBlackjack).getHand() + "`**!**!");
+            result.append("**, You lost with **`" + player.get(currentBlackjack).getHand() + "`** vs **`" + dealerHand + "`**!**!");
+        } else if (player.get(currentBlackjack).getHand() > 21 && dealerHand > 21) {
+            // result 2: both busted
+            result.append("**, It was a tie! **`" + player.get(currentBlackjack).getHand() + "`** vs **`" + dealerHand + "`**!**!");
+        } else if (player.get(currentBlackjack).getHand() == dealerHand) {
+            // result 3: same total
+            result.append("**, It was a tie! **`" + player.get(currentBlackjack).getHand() + "`** vs **`" + dealerHand + "`**!**!");
         } else if (player.get(currentBlackjack).getHand() > 21) {
-            // result 2: player busted
-            result.append("**, You lost with **`" + player.get(currentBlackjack).getHand() + "`** vs **`" + dealer.get(currentBlackjack).getHand() + "`**!**!");
-        } else if (player.get(currentBlackjack).getHand() > 21 && dealer.get(currentBlackjack).getHand() > 21) {
-            // result 3: both busted
-            result.append("**, It was a tie! **`" + player.get(currentBlackjack).getHand() + "`** vs **`" + dealer.get(currentBlackjack).getHand() + "`**!**!");
-        } else if (player.get(currentBlackjack).getHand() == dealer.get(currentBlackjack).getHand()) {
-            // result 4: same total
-            result.append("**, It was a tie! **`" + player.get(currentBlackjack).getHand() + "`** vs **`" + dealer.get(currentBlackjack).getHand() + "`**!**!");
-        } else if (dealer.get(currentBlackjack).getHand() == 21 && player.get(currentBlackjack).getHand() != 21) {
+            // result 4: player busted
+            result.append("**, You lost with **`" + player.get(currentBlackjack).getHand() + "`** vs **`" + dealerHand + "`**!**!");
+        } else if (dealerHand == 21 && player.get(currentBlackjack).getHand() != 21) {
             // result 5: dealer had a total of 21 and player did not
-            result.append("**, You lost with **`" + player.get(currentBlackjack).getHand() + "`** vs **`" + dealer.get(currentBlackjack).getHand() + "`**!**!");
-        } else if (player.get(currentBlackjack).getHand() == 21 && dealer.get(currentBlackjack).getHand() != 21) {
+            result.append("**, You lost with **`" + player.get(currentBlackjack).getHand() + "`** vs **`" + dealerHand + "`**!**!");
+        } else if (player.get(currentBlackjack).getHand() == 21 && dealerHand != 21) {
             // result 6: player had a total of 21 and dealer did not
-            result.append("**, You won with **`" + player.get(currentBlackjack).getHand() + "`** vs **`" + dealer.get(currentBlackjack).getHand() + "`**!**!");
-        } else if (player.get(currentBlackjack).getHand() > dealer.get(currentBlackjack).getHand() && player.get(currentBlackjack).getHand() < 22) {
+            result.append("**, You won with **`" + player.get(currentBlackjack).getHand() + "`** vs **`" + dealerHand + "`**!**!");
+        } else if (player.get(currentBlackjack).getHand() > dealerHand && player.get(currentBlackjack).getHand() < 22) {
             // result 7: player had a bigger total than dealer and didn't bust
-            result.append("**, You won with **`" + player.get(currentBlackjack).getHand() + "`** vs **`" + dealer.get(currentBlackjack).getHand() + "`**!**!");
+            result.append("**, You won with **`" + player.get(currentBlackjack).getHand() + "`** vs **`" + dealerHand + "`**!**!");
         }
 
         dealer.remove(currentBlackjack);

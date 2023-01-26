@@ -1,6 +1,5 @@
 package com.github.slashfly.salamanderbot;
 
-import static com.github.slashfly.salamanderbot.Blackjack.dealer;
 import static com.github.slashfly.salamanderbot.Blackjack.player;
 import static com.github.slashfly.salamanderbot.Blackjack.currentMessage;
 
@@ -26,7 +25,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
 import java.util.List;
-import java.text.DecimalFormat;
 
 import reactor.core.publisher.Mono;
 
@@ -43,6 +41,10 @@ public class SalamanderBot {
         String token = Files.readString(tokenFile);
 
         // add an arraylist value that states how many blackjack games have been played
+        // add a few empty values to the player arraylist beforehand to avoid IndexOutOfBoundsException
+        for (int i = 0; i < 10; i++) {
+            player.add(0, new Object());
+        }
         currentMessage.add(0, new Object());
 
         // login
@@ -71,7 +73,7 @@ public class SalamanderBot {
                 }
                 return Mono.empty();
             }
-
+            /*
             public Publisher<?> onButtonInteraction(ButtonInteractionEvent event) {
                 if (event.getCustomId().equals("hit")) {
                     return event.deferReply().then(blackjackHit(event, currentBlackjack));
@@ -80,6 +82,7 @@ public class SalamanderBot {
                 }
                 return Mono.empty();
             }
+             */
         }).blockLast();
     }
 
@@ -103,7 +106,6 @@ public class SalamanderBot {
         // use the snowflake as an index number for arraylist 
         player.add(currentBlackjack, new Object());
 
-        String newDealer = Blackjack.dealer(event.getInteraction().getCommandInteraction().get(), currentBlackjack);
         String newPlayer = Blackjack.player(event.getInteraction().getCommandInteraction().get(), currentBlackjack);
 
         return event.createFollowup(author.getMention() + "**, your current total is **" + "`" + newPlayer + "`.\n"
@@ -126,11 +128,11 @@ public class SalamanderBot {
         }
         return Mono.empty();
     }
-    
+
     private static Mono<Message> blackjackStand(ButtonInteractionEvent event, int currentBlackjack) {
         // get the user initating the interaction
         final User author = event.getInteraction().getUser();
-        
+
         String result = Blackjack.stand(event.getInteraction().getCommandInteraction().get(), currentBlackjack);
         return event.editReply(author.getMention() + result);
     }
