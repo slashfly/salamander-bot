@@ -38,6 +38,8 @@ public class SalamanderBot {
     // all response buttons
     public static Button hit = Button.success("hit", "Hit");
     public static Button stand = Button.danger("stand", "Stand");
+    public static Button disabledHit = Button.success("disabledHit", "Hit").disabled();
+    public static Button disabledStand = Button.danger("disabledStand", "Stand").disabled();
 
     public static void main(String[] args) throws IOException {
         Path tokenFile = Path.of("token.txt");
@@ -122,9 +124,9 @@ public class SalamanderBot {
     private static Mono<Message> blackjackHit(ButtonInteractionEvent event, Long snowflake) {
         // get the user initating the interaction
         final User author = event.getInteraction().getUser();
-        
+
         int currentBlackjack = snowflakeConverter(snowflake);
-        
+
         String playerHit = Blackjack.hit(event.getInteraction().getCommandInteraction().get(), currentBlackjack);
         if (Integer.parseInt(playerHit) < 21) {
             return event.editReply(author.getMention() + "**, your current total is **" + "`" + playerHit + "`.\n"
@@ -132,7 +134,8 @@ public class SalamanderBot {
                     .withComponents(ActionRow.of(hit, stand));
         } else if (Integer.parseInt(playerHit) > 20) {
             String loss = Blackjack.stand(event.getInteraction().getCommandInteraction().get(), currentBlackjack);
-            return event.editReply(author.getMention() + loss);
+            return event.editReply(author.getMention() + loss)
+                    .withComponents(ActionRow.of(disabledHit, disabledStand));
         }
         return Mono.empty();
     }
@@ -142,9 +145,10 @@ public class SalamanderBot {
         final User author = event.getInteraction().getUser();
 
         int currentBlackjack = snowflakeConverter(snowflake);
-        
+
         String result = Blackjack.stand(event.getInteraction().getCommandInteraction().get(), currentBlackjack);
-        return event.editReply(author.getMention() + result);
+        return event.editReply(author.getMention() + result)
+                .withComponents(ActionRow.of(disabledHit, disabledStand));
     }
 
     private static int snowflakeConverter(Long snowflake) {
