@@ -58,17 +58,20 @@ public class Blackjack {
         } else if (player.get(currentBlackjack).getHand() > 21) {
             // result 4: player busted
             result.append("**, You lost with **`" + player.get(currentBlackjack).getHand() + "`** vs **`" + dealerHand + "`**!**");
+        } else if (dealerHand > 21) {
+            // result 5: dealer busted
+            result.append("**, You won with **`" + player.get(currentBlackjack).getHand() + "`** vs **`" + dealerHand + "`**!**");
         } else if (dealerHand == 21 && player.get(currentBlackjack).getHand() != 21) {
-            // result 5: dealer had a total of 21 and player did not
+            // result 6: dealer had a total of 21 and player did not
             result.append("**, You lost with **`" + player.get(currentBlackjack).getHand() + "`** vs **`" + dealerHand + "`**!**");
         } else if (player.get(currentBlackjack).getHand() == 21 && dealerHand != 21) {
-            // result 6: player had a total of 21 and dealer did not
+            // result 7: player had a total of 21 and dealer did not
             result.append("**, You won with **`" + player.get(currentBlackjack).getHand() + "`** vs **`" + dealerHand + "`**!**");
         } else if (player.get(currentBlackjack).getHand() > dealerHand && player.get(currentBlackjack).getHand() < 22) {
-            // result 7: player had a bigger total than dealer and didn't bust
+            // result 8: player had a bigger total than dealer and didn't bust
             result.append("**, You won with **`" + player.get(currentBlackjack).getHand() + "`** vs **`" + dealerHand + "`**!**");
         }
-
+        
         dealer.remove(currentBlackjack);
         player.remove(currentBlackjack);
         return result.toString();
