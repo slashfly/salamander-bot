@@ -72,9 +72,11 @@ public class SalamanderBot {
                     String roll = roll(event.getInteraction().getCommandInteraction().get());
                     return event.reply(author.getMention() + ", You rolled **" + roll + "**!");
                 } else if (event.getCommandName().equals("blackjack")) {
+                    // create custom message id
                     currentMessage.get(0).setTimesUsed(currentMessage.get(0).getTimesUsed() + 1);
                     currentBlackjack.get(0).setCurrentBlackjack(currentMessage.get(0).getTimesUsed());
                     int customMessageId = currentBlackjack.get(0).getCurrentBlackjack();
+                    
                     return event.deferReply().then(blackjackMain(event, customMessageId));
                 }
                 return Mono.empty();
