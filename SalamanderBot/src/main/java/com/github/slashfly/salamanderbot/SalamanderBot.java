@@ -75,6 +75,8 @@ public class SalamanderBot {
             public Publisher<?> onButtonInteraction(ButtonInteractionEvent event) {
                 if (event.getCustomId().equals("hit")) {
                     return event.deferReply().then(blackjackHit(event, currentBlackjack));
+                } else if (event.getCustomId().equals("stand")) {
+                    return event.deferReply().then(blackjackStand(event, currentBlackjack));
                 }
                 return Mono.empty();
             }
@@ -109,7 +111,7 @@ public class SalamanderBot {
                 .withComponents(ActionRow.of(hit, stand));
     }
 
-    private static Mono<Message> blackjackHit(ChatInputInteractionEvent event, int currentBlackjack) {
+    private static Mono<Message> blackjackHit(ButtonInteractionEvent event, int currentBlackjack) {
         // get the user initating the interaction
         final User author = event.getInteraction().getUser();
 
@@ -124,5 +126,12 @@ public class SalamanderBot {
         }
         return Mono.empty();
     }
-
+    
+    private static Mono<Message> blackjackStand(ButtonInteractionEvent event, int currentBlackjack) {
+        // get the user initating the interaction
+        final User author = event.getInteraction().getUser();
+        
+        String result = Blackjack.stand(event.getInteraction().getCommandInteraction().get(), currentBlackjack);
+        return event.editReply(author.getMention() + result);
+    }
 }
