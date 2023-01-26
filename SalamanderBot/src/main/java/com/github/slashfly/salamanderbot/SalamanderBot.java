@@ -1,7 +1,6 @@
 package com.github.slashfly.salamanderbot;
 
 import static com.github.slashfly.salamanderbot.Blackjack.player;
-import static com.github.slashfly.salamanderbot.Blackjack.currentMessage;
 import static com.github.slashfly.salamanderbot.Blackjack.dealer;
 
 import org.reactivestreams.Publisher;
@@ -50,7 +49,6 @@ public class SalamanderBot {
             player.add(0, new Object());
             dealer.add(0, new Object());
         }
-        currentMessage.add(0, new Object());
 
         // login
         GatewayDiscordClient client = DiscordClientBuilder.create(token).build().login().block();

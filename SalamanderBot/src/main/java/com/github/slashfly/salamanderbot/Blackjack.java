@@ -7,7 +7,6 @@ public class Blackjack {
 
     public static ArrayList<Object> player = new ArrayList<>();
     public static ArrayList<Object> dealer = new ArrayList<>();
-    public static ArrayList<Object> currentMessage = new ArrayList<>();
 
     public static int dealer(int currentBlackjack) {
         dealer.add(currentBlackjack, new Object());
