@@ -2,18 +2,21 @@ package com.github.slashfly.salamanderbot;
 
 import static com.github.slashfly.salamanderbot.Blackjack.dealer;
 import static com.github.slashfly.salamanderbot.Blackjack.player;
+import static com.github.slashfly.salamanderbot.Blackjack.currentMessage;
 
 import org.reactivestreams.Publisher;
 
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.ReactiveEventAdapter;
+import discord4j.core.event.domain.interaction.ButtonInteractionEvent;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.object.command.ApplicationCommandInteraction;
 import discord4j.core.object.command.ApplicationCommandInteractionOption;
 import discord4j.core.object.command.ApplicationCommandInteractionOptionValue;
 import discord4j.core.object.component.ActionRow;
 import discord4j.core.object.component.Button;
+import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
 
 import org.slf4j.Logger;
@@ -31,15 +34,16 @@ public class SalamanderBot {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SalamanderBot.class);
 
+    // all response buttons
+    public static Button hit = Button.success("hit", "Hit");
+    public static Button stand = Button.danger("stand", "Stand");
+
     public static void main(String[] args) throws IOException {
         Path tokenFile = Path.of("token.txt");
         String token = Files.readString(tokenFile);
 
-        // add enough elements to the blackjack arraylist to hold the snowflake index numbers
-        for (int i = 0; i < 40000; i++) {
-            player.add(0, new Object());
-            dealer.add(0, new Object());
-        }
+        // add an arraylist value that states how many blackjack games have been played
+        currentMessage.add(0, new Object());
 
         // login
         GatewayDiscordClient client = DiscordClientBuilder.create(token).build().login().block();
@@ -52,12 +56,7 @@ public class SalamanderBot {
             LOGGER.error("Failed to register slash commands with Discord", e);
         }
 
-        // all response buttons
-        Button hit = Button.success("hit", "Hit");
-        Button stand = Button.danger("stand", "Stand");
-
         client.on(new ReactiveEventAdapter() {
-            @Override
             public Publisher<?> onChatInputInteraction(ChatInputInteractionEvent event) {
                 // get the user initating the interaction
                 final User author = event.getInteraction().getUser();
@@ -66,21 +65,16 @@ public class SalamanderBot {
                     String roll = roll(event.getInteraction().getCommandInteraction().get());
                     return event.reply(author.getMention() + ", You rolled **" + roll + "**!");
                 } else if (event.getCommandName().equals("blackjack")) {
-                    // sqrt twice and round the snowflake to make it below the 32-bit integer limit
-                    // use decimal format to prevent the snowflake from being in scientific notation
-                    DecimalFormat df = new DecimalFormat("#");
-                    Double bjSnowflakeLong = Double.valueOf(event.getInteraction().getId().asString());
-                    String bjSnowflakeString = df.format(Math.sqrt(Math.sqrt(bjSnowflakeLong)));
+                    currentMessage.get(0).setTimesUsed(currentMessage.get(0).getTimesUsed() + 1);
+                    int currentBlackjack = currentMessage.get(0).getTimesUsed();
+                    return event.deferReply().then(blackjackMain(event, currentBlackjack));
+                }
+                return Mono.empty();
+            }
 
-                    int bjSnowflake = Math.round(Long.parseLong(bjSnowflakeString));
-
-                    // use the snowflake as an index number for arraylist 
-                    player.add(bjSnowflake, new Object());
-
-                    String playerHit = Blackjack.hit(event.getInteraction().getCommandInteraction().get(), bjSnowflake);
-                    return event.reply(author.getMention() + "**, your current total is **" + "`" + playerHit + "`.\n"
-                            + "What will you do?")
-                            .withComponents(ActionRow.of(hit, stand));
+            public Publisher<?> onButtonInteraction(ButtonInteractionEvent event) {
+                if (event.getCustomId().equals("hit")) {
+                    return event.deferReply().then(blackjackHit(event, currentBlackjack));
                 }
                 return Mono.empty();
             }
@@ -98,6 +92,37 @@ public class SalamanderBot {
         StringBuilder result = new StringBuilder();
         result.append((int) ((Math.random() * (max - 1)) + 1));
         return result.toString();
+    }
+
+    private static Mono<Message> blackjackMain(ChatInputInteractionEvent event, int currentBlackjack) {
+        // get the user initating the interaction
+        final User author = event.getInteraction().getUser();
+
+        // use the snowflake as an index number for arraylist 
+        player.add(currentBlackjack, new Object());
+
+        String newDealer = Blackjack.dealer(event.getInteraction().getCommandInteraction().get(), currentBlackjack);
+        String newPlayer = Blackjack.player(event.getInteraction().getCommandInteraction().get(), currentBlackjack);
+
+        return event.createFollowup(author.getMention() + "**, your current total is **" + "`" + newPlayer + "`.\n"
+                + "What will you do?")
+                .withComponents(ActionRow.of(hit, stand));
+    }
+
+    private static Mono<Message> blackjackHit(ChatInputInteractionEvent event, int currentBlackjack) {
+        // get the user initating the interaction
+        final User author = event.getInteraction().getUser();
+
+        String playerHit = Blackjack.hit(event.getInteraction().getCommandInteraction().get(), currentBlackjack);
+        if (Integer.parseInt(playerHit) < 21) {
+            return event.editReply(author.getMention() + "**, your current total is **" + "`" + playerHit + "`.\n"
+                    + "What will you do?")
+                    .withComponents(ActionRow.of(hit, stand));
+        } else if (Integer.parseInt(playerHit) > 20) {
+            String loss = Blackjack.stand(event.getInteraction().getCommandInteraction().get(), currentBlackjack);
+            return event.editReply(author.getMention() + loss);
+        }
+        return Mono.empty();
     }
 
 }
