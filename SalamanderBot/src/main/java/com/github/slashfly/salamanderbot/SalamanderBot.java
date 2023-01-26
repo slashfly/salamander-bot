@@ -1,6 +1,5 @@
 package com.github.slashfly.salamanderbot;
 
-import static com.github.slashfly.salamanderbot.Blackjack.currentBlackjack;
 import static com.github.slashfly.salamanderbot.Blackjack.player;
 import static com.github.slashfly.salamanderbot.Blackjack.currentMessage;
 import static com.github.slashfly.salamanderbot.Blackjack.dealer;
@@ -50,7 +49,6 @@ public class SalamanderBot {
             dealer.add(0, new Object());
         }
         currentMessage.add(0, new Object());
-        currentBlackjack.add(0, new Object());
 
         // login
         GatewayDiscordClient client = DiscordClientBuilder.create(token).build().login().block();
@@ -72,18 +70,17 @@ public class SalamanderBot {
                     String roll = roll(event.getInteraction().getCommandInteraction().get());
                     return event.reply(author.getMention() + ", You rolled **" + roll + "**!");
                 } else if (event.getCommandName().equals("blackjack")) {
-                    // create custom message id
+                    // create custom message id by counting amount of times blackjack command has been used
                     currentMessage.get(0).setTimesUsed(currentMessage.get(0).getTimesUsed() + 1);
-                    currentBlackjack.get(0).setCurrentBlackjack(currentMessage.get(0).getTimesUsed());
-                    int customMessageId = currentBlackjack.get(0).getCurrentBlackjack();
-                    
+                    int customMessageId = currentMessage.get(0).getTimesUsed();
+
                     return event.deferReply().then(blackjackMain(event, customMessageId));
                 }
                 return Mono.empty();
             }
 
             public Publisher<?> onButtonInteraction(ButtonInteractionEvent event) {
-                int customMessageId = currentBlackjack.get(0).getCurrentBlackjack();
+                int customMessageId = currentMessage.get(0).getTimesUsed();
                 if (event.getCustomId().equals("hit")) {
                     return event.deferEdit().then(blackjackHit(event, customMessageId));
                 } else if (event.getCustomId().equals("stand")) {

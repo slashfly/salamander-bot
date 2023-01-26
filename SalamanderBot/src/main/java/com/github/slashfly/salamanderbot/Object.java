@@ -20,12 +20,4 @@ public class Object {
     public void setTimesUsed(int newTimesUsed) {
         this.timesUsed = newTimesUsed;
     }
-    
-    public int getCurrentBlackjack(){
-        return this.currentBlackjack;
-    }
-    
-    public void setCurrentBlackjack(int newCurrentBlackjack) {
-        this.currentBlackjack = newCurrentBlackjack;
-    }
 }
